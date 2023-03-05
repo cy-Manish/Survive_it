@@ -1,10 +1,8 @@
 using Godot;
 using System;
 
-public class GhostPlayer : Node
+public class SpikeTrap : Node2D
 {
-    public Vector2 GlobalPosition { get; internal set; }
-
     // Declare member variables here. Examples:
     // private int a = 2;
     // private string b = "text";
@@ -12,7 +10,7 @@ public class GhostPlayer : Node
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-       //GetNode<AnimationPlayer("AnimationPlayer").Play("FadeOut");
+        
     }
 
 //  // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -20,4 +18,14 @@ public class GhostPlayer : Node
 //  {
 //      
 //  }
+private void _on_Area2D_body_entered(object body){
+GD.Print("Body: " + body + "has entered");
+if (body is KinematicBody2D){
+    if(body is Player){
+        Player pc = body as Player;
+        pc.TakeDamage();
+    }
+}
+
+}
 }

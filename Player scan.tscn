@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://Player.cs" type="Script" id=1]
 [ext_resource path="res://onlyDirt.png" type="Texture" id=2]
@@ -7,6 +7,8 @@
 [ext_resource path="res://dirt.png" type="Texture" id=5]
 [ext_resource path="res://zoom.png" type="Texture" id=6]
 [ext_resource path="res://edit.png" type="Texture" id=7]
+[ext_resource path="res://SpikeTrap.cs" type="Script" id=8]
+[ext_resource path="res://obstacles.png" type="Texture" id=9]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 points = PoolVector2Array( 64, 64, 0, 64, 0, 0, 64, 0 )
@@ -179,6 +181,9 @@ animations = [ {
 "speed": 5.0
 } ]
 
+[sub_resource type="RectangleShape2D" id=27]
+extents = Vector2( 23.5, 17 )
+
 [node name="world" type="Node2D"]
 
 [node name="TileMap" type="TileMap" parent="."]
@@ -231,3 +236,23 @@ position = Vector2( 0, 7.182 )
 rotation = -1.5708
 enabled = true
 cast_to = Vector2( 0, 10 )
+
+[node name="SpikeTrap" type="Node2D" parent="."]
+position = Vector2( 477, 54 )
+script = ExtResource( 8 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="SpikeTrap"]
+position = Vector2( 7, -6.5 )
+scale = Vector2( 0.96875, 0.984375 )
+texture = ExtResource( 9 )
+
+[node name="Area2D" type="Area2D" parent="SpikeTrap"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SpikeTrap/Area2D"]
+position = Vector2( 4.5, -7 )
+shape = SubResource( 27 )
+
+[connection signal="body_entered" from="SpikeTrap/Area2D" to="SpikeTrap" method="_on_Area2D_body_entered"]

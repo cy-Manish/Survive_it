@@ -23,8 +23,11 @@ public class Player : KinematicBody2D
     private float climbTimer = 5f;
     private float climbTimerReset = 5f;
     private bool isInAir = false;
+    private int Health = 3;
+   private int facingDirection = 0;
+   private bool isTakingDamage = false;
     // [Export]
-    // public PackedScene GhostPlayerInstance;
+    //  public PackedScene GhostPlayerInstance;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready() { }
@@ -66,9 +69,9 @@ public class Player : KinematicBody2D
         if (isDashing)
         {
             dashTimer -= delta;
-            GhostPlayer ghost = GhostPlayerInstance.Instance() as GhostPlayer;
-            Owner.AddChild(ghost);
-            ghost.GlobalPosition = this.GlobalPosition;
+            // GhostPlayer ghost = GhostPlayerInstance.Instance() as GhostPlayer;
+            // Owner.AddChild(ghost);
+            // ghost.GlobalPosition = this.GlobalPosition;
             if (dashTimer <= 0)
             {
                 isDashing = false; 
@@ -132,29 +135,36 @@ public class Player : KinematicBody2D
 
     private void processMovement(float delta)
     {
-        int direction = 0;
+        facingDirection = 0;
+        if(!isTakingDamage){
+
         if (Input.IsActionPressed("ui_left"))
-        {
-            direction -= 1;
-             GetNode<AnimatedSprite>("AnimatedSprite").FlipH=true;
+            {
+                facingDirection -= 1;
+                GetNode<AnimatedSprite>("AnimatedSprite").FlipH=true;
+            }
+            if (Input.IsActionPressed("ui_right"))
+            {
+                facingDirection += 1;
+                GetNode<AnimatedSprite>("AnimatedSprite").FlipH =false;
+            }
         }
-        if (Input.IsActionPressed("ui_right"))
+        if (facingDirection != 0)
         {
-            direction += 1;
-             GetNode<AnimatedSprite>("AnimatedSprite").FlipH =false;
-        }
-        if (direction != 0)
-        {
-            velocity.x = Mathf.Lerp(velocity.x, direction * speed, acceleration);
+            velocity.x = Mathf.Lerp(velocity.x, facingDirection * speed, acceleration);
+            
             if(!isInAir){
                 GetNode<AnimatedSprite>("AnimatedSprite").Play("Run");
             }
         }
         else
         {
-            if(!isInAir){
-                 GetNode<AnimatedSprite>("AnimatedSprite").Play("Front");
-                 velocity.x = Mathf.Lerp(velocity.x, 0, friction);
+               velocity.x = Mathf.Lerp(velocity.x, 0, friction);
+                if(velocity.x < 5 && velocity.x > -5){
+                 if(!isInAir){
+                    GetNode<AnimatedSprite>("AnimatedSprite").Play("Front");
+                isTakingDamage=false;
+            }          
             }
         }
     }
@@ -227,4 +237,18 @@ public class Player : KinematicBody2D
             }
         }
     }
+public void TakeDamage(){
+    GD.Print("Player Has Taken Damage");
+    Health -= 1;
+    GD.Print("Current Health " +Health);
+    velocity = MoveAndSlide(new Vector2(500f * -facingDirection, -80), Vector2.Up);
+   isTakingDamage =true; 
+    GetNode<AnimatedSprite>("AnimatedSprite").Play("TakeDamage");
+    if(Health <= 0){
+        Health =0;
+        GD.Print("Player Has Died!");
+    }
+   
+   
+}
 }
