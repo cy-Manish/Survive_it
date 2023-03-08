@@ -24,8 +24,10 @@ public class Player : KinematicBody2D
     private float climbTimerReset = 5f;
     private bool isInAir = false;
     private int Health = 3;
-   private int facingDirection = 0;
-   private bool isTakingDamage = false;
+    private int facingDirection = 0;
+    private bool isTakingDamage = false;
+    [Signal]
+    public delegate void Death();
     // [Export]
     //  public PackedScene GhostPlayerInstance;
 
@@ -34,6 +36,8 @@ public class Player : KinematicBody2D
 
     //  // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(float delta)
+    {
+    if (Health > 0)
     {
         if (!isDashing && !isWallJumping)
         {
@@ -91,6 +95,7 @@ public class Player : KinematicBody2D
         }
 
         MoveAndSlide(velocity, Vector2.Up);
+    }
     }
 
     private void processClimb(float delta)
@@ -246,9 +251,24 @@ public void TakeDamage(){
     GetNode<AnimatedSprite>("AnimatedSprite").Play("TakeDamage");
     if(Health <= 0){
         Health =0;
+         GetNode<AnimatedSprite>("AnimatedSprite").Play("Death");
         GD.Print("Player Has Died!");
     }
    
    
 }
+
+    private void _on_AnimatedSprite_animation_finished(){
+        if ( GetNode<AnimatedSprite>("AnimatedSprite").GetAnimation()=="Death"){
+         GetNode<AnimatedSprite>("AnimatedSprite").Stop();
+         Hide();
+        GD.Print("Animation Finished!");
+        EmitSignal(nameof(Death));
+    }
+}
+    public void RespawnPlayer(){
+        Show();
+        Health = 3;
+    }
+
 }
