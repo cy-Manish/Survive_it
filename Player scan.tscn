@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=2]
+[gd_scene load_steps=48 format=2]
 
 [ext_resource path="res://SpikeTrap.tscn" type="PackedScene" id=1]
 [ext_resource path="res://onlyDirt.png" type="Texture" id=2]
@@ -40,6 +40,7 @@
 [ext_resource path="res://2D_Archer_Spritesheets_1024x1024/Shoot_Stand/shoot_stand_020.png" type="Texture" id=38]
 [ext_resource path="res://2D_Archer_Spritesheets_1024x1024/Shoot_Stand/shoot_stand_018.png" type="Texture" id=39]
 [ext_resource path="res://2D_Archer_Spritesheets_1024x1024/Idle/idle_test_008.png" type="Texture" id=40]
+[ext_resource path="res://Arrow.tscn" type="PackedScene" id=41]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 points = PoolVector2Array( 64, 64, 0, 64, 0, 0, 64, 0 )
@@ -119,7 +120,7 @@ points = PoolVector2Array( 64, 64, 0, 64, 0, 0, 64, 0 )
 animations = [ {
 "frames": [ ExtResource( 29 ), ExtResource( 32 ), ExtResource( 26 ), ExtResource( 34 ), ExtResource( 35 ), ExtResource( 27 ), ExtResource( 30 ), ExtResource( 37 ), ExtResource( 40 ), ExtResource( 33 ) ],
 "loop": true,
-"name": "Idel",
+"name": "Idle",
 "speed": 3.0
 }, {
 "frames": [ ExtResource( 20 ), ExtResource( 8 ), ExtResource( 23 ), ExtResource( 21 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 22 ), ExtResource( 13 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 14 ), ExtResource( 18 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ), ExtResource( 19 ), ExtResource( 25 ), ExtResource( 31 ), ExtResource( 39 ), ExtResource( 28 ), ExtResource( 38 ), ExtResource( 36 ) ],
@@ -149,20 +150,17 @@ position = Vector2( 846, 246 )
 
 [node name="RespawnPoint" parent="." instance=ExtResource( 12 )]
 position = Vector2( 214, 93 )
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="ArcherEnemy" type="Node2D" parent="."]
 position = Vector2( 1802, 226 )
 script = ExtResource( 24 )
+Arrow = ExtResource( 41 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="ArcherEnemy"]
 position = Vector2( -229.5, -0.140625 )
 scale = Vector2( 0.0615234, 0.0622253 )
 frames = SubResource( 5 )
-animation = "Shooting"
-frame = 5
+animation = "Idle"
 speed_scale = 2.0
 
 [node name="Detection Radius" type="Area2D" parent="ArcherEnemy"]
@@ -172,7 +170,9 @@ position = Vector2( -230, 0 )
 shape = SubResource( 6 )
 
 [node name="ProjectileSpwan" type="Position2D" parent="ArcherEnemy"]
+position = Vector2( -214, -12 )
 
 [connection signal="Death" from="Player" to="." method="_on_Player_Death"]
+[connection signal="animation_finished" from="ArcherEnemy/AnimatedSprite" to="ArcherEnemy" method="_on_AnimatedSprite_animation_finished"]
 [connection signal="body_entered" from="ArcherEnemy/Detection Radius" to="ArcherEnemy" method="_on_Detection_Radius_body_entered"]
 [connection signal="body_exited" from="ArcherEnemy/Detection Radius" to="ArcherEnemy" method="_on_Detection_Radius_body_exited"]

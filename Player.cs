@@ -3,7 +3,7 @@ using System;
 
 public class Player : KinematicBody2D
 {
-    private int speed = 100;
+    private int speed = 200;
     private int gravity = 40;
     private float friction = .1f;
     private float acceleration = .5f;
@@ -244,15 +244,17 @@ public class Player : KinematicBody2D
     }
 public void TakeDamage(){
     GD.Print("Player Has Taken Damage");
-    Health -= 1;
-    GD.Print("Current Health " +Health);
-    velocity = MoveAndSlide(new Vector2(500f * -facingDirection, -80), Vector2.Up);
-   isTakingDamage =true; 
-    GetNode<AnimatedSprite>("AnimatedSprite").Play("TakeDamage");
-    if(Health <= 0){
-        Health =0;
-         GetNode<AnimatedSprite>("AnimatedSprite").Play("Death");
-        GD.Print("Player Has Died!");
+    if(Health > 0){
+        Health -= 1;
+        GD.Print("Current Health " +Health);
+        velocity = MoveAndSlide(new Vector2(500f * -facingDirection, -80), Vector2.Up);
+        isTakingDamage =true; 
+        GetNode<AnimatedSprite>("AnimatedSprite").Play("TakeDamage");
+        if(Health <= 0){
+            Health =0;
+            GetNode<AnimatedSprite>("AnimatedSprite").Play("Death");
+            GD.Print("Player Has Died!");
+        }
     }
    
    
